@@ -1,0 +1,29 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<CommandTable xmlns="http://schemas.microsoft.com/VisualStudio/2005-10-18/CommandTable" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
+	<Extern href="stdidcmd.h"/>
+	<Extern href="vsshlids.h"/>
+	<Include href="KnownImageIds.vsct"/>
+	<Include href="VSGlobals.vsct"/>
+
+	<Commands package="SBExplorer">
+		<!--This section defines the elements the user can interact with, like a menu command or a button or combo box in a toolbar. -->
+		<Buttons>
+			<Button guid="SBExplorer" id="SBExplorer" priority="0x0100" type="Button">
+				<Parent guid="VSMainMenu" id="View.DevWindowsGroup"/>
+				<Icon guid="ImageCatalogGuid" id="ServiceBusQueueTrid" />
+				<CommandFlag>IconIsMoniker</CommandFlag>
+				<Strings>
+					<ButtonText>ServiceBus Explorer</ButtonText>
+					<LocCanonicalName>.View.ServiceBusExplorer</LocCanonicalName>
+				</Strings>
+			</Button>
+		</Buttons>
+	</Commands>
+
+	<Symbols>
+		<GuidSymbol name="SBExplorer" value="{79ce924e-7a7c-4160-bab5-ab18ac15b984}">
+			<IDSymbol name="SBExplorer" value="0x0100" />
+		</GuidSymbol>
+	</Symbols>
+</CommandTable>
