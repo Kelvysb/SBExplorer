@@ -1,10 +1,10 @@
-﻿using Community.VisualStudio.Toolkit;
-using Microsoft.VisualStudio.Shell;
-using Microsoft.VisualStudio.Shell.Interop;
-using SBExplorer.Services;
-using System;
+﻿using System;
 using System.Runtime.InteropServices;
 using System.Threading;
+using Community.VisualStudio.Toolkit;
+using Microsoft.VisualStudio.Shell;
+using Microsoft.VisualStudio.Shell.Interop;
+using SBExplorer.Core.Services;
 using Task = System.Threading.Tasks.Task;
 
 namespace SBExplorer
@@ -16,12 +16,18 @@ namespace SBExplorer
     [Guid(PackageGuids.SBExplorerString)]
     public sealed class SBExplorerPackage : ToolkitPackage
     {
+        public static ServiceBusExplorerService Service { get; private set; }
+
         protected override async Task InitializeAsync(CancellationToken cancellationToken, IProgress<ServiceProgressData> progress)
         {
             await JoinableTaskFactory.SwitchToMainThreadAsync(cancellationToken);
             var solutionService = (SVsSolution)await GetServiceAsync(typeof(SVsSolution));
             var solutionInterface = solutionService as IVsSolution;
-            ServiceBusExplorerService.Initialize(solutionInterface);
+            _ = solutionInterface.GetSolutionInfo(
+                out var solutionFolder,
+                out var solutionFile,
+                out var userOptsFile);
+            Service = new ServiceBusExplorerService(solutionFolder, solutionFile);
             await this.RegisterCommandsAsync();
             this.RegisterToolWindows();
         }

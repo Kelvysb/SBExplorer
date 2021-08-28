@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace SBExplorer.Models
+namespace SBExplorer.Core.Models
 {
     public class ConnectionConfig
     {

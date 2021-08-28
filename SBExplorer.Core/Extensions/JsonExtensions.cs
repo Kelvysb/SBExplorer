@@ -1,7 +1,7 @@
-﻿using Newtonsoft.Json.Linq;
-using System.Linq;
+﻿using System.Linq;
+using Newtonsoft.Json.Linq;
 
-namespace SBExplorer.Extensions
+namespace SBExplorer.Core.Extensions
 {
     public static class JsonExtensions
     {

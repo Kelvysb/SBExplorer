@@ -1,7 +1,7 @@
 ﻿using System;
 using System.IO;
 
-namespace SBExplorer.Helpers
+namespace SBExplorer.Core.Helpers
 {
     public class PathHelper
     {

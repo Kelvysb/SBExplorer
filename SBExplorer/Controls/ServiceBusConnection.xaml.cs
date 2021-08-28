@@ -1,8 +1,8 @@
-﻿using SBExplorer.Models;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using SBExplorer.Core.Models;
 
 namespace SBExplorer.Controls
 {
@@ -12,13 +12,13 @@ namespace SBExplorer.Controls
     public partial class ServiceBusConnection : UserControl
     {
         private readonly ConnectionConfig connection;
+        private List<ServiceBusQueue> serviceBusQueues;
+
         public ServiceBusConnection(ConnectionConfig connection)
         {
             this.connection = connection;
             InitializeComponent();
         }
-
-        private List<ServiceBusQueue> serviceBusQueues;
 
         #region Events
 
@@ -33,6 +33,7 @@ namespace SBExplorer.Controls
                 MessageBox.Show(ex.Message, "ServiceBus Explorer", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
+
         private void BtnRefresh_Click(object sender, RoutedEventArgs e)
         {
             try
@@ -44,7 +45,8 @@ namespace SBExplorer.Controls
                 MessageBox.Show(ex.Message, "ServiceBus Explorer", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
-        #endregion
+
+        #endregion Events
 
         #region Methods
 
@@ -68,7 +70,7 @@ namespace SBExplorer.Controls
                 queue.Refresh();
             }
         }
-        #endregion
 
+        #endregion Methods
     }
 }

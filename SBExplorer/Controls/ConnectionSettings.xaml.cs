@@ -1,10 +1,10 @@
-﻿using SBExplorer.Models;
-using SBExplorer.Services;
-using System;
+﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using SBExplorer.Core.Models;
+using SBExplorer.Core.Services;
 
 namespace SBExplorer.Controls
 {
@@ -13,17 +13,22 @@ namespace SBExplorer.Controls
     /// </summary>
     public partial class ConnectionSettings : UserControl
     {
-        private ConnectionConfig connectionConfig;
         private readonly ServiceBusExplorerService serviceBusExplorerService;
+        private ConnectionConfig connectionConfig;
 
         public ConnectionSettings(ConnectionConfig connectionConfig)
         {
-            serviceBusExplorerService = ServiceBusExplorerService.GetInstance();
+            serviceBusExplorerService = SBExplorerPackage.Service;
             this.connectionConfig = connectionConfig;
             InitializeComponent();
         }
 
         #region Events
+
+        public delegate void RemoveConnectionHandler(object sender, ConnectionConfig connectionConfig);
+
+        public event RemoveConnectionHandler RemoveConnection;
+
         private void UserControl_Loaded(object sender, RoutedEventArgs e)
         {
             try
@@ -50,7 +55,6 @@ namespace SBExplorer.Controls
 
         private void TxtName_TextChanged(object sender, TextChangedEventArgs e)
         {
-
             try
             {
                 connectionConfig.Description = TxtName.Text;
@@ -135,7 +139,6 @@ namespace SBExplorer.Controls
 
         private void BtnIsolate_Click(object sender, RoutedEventArgs e)
         {
-
             try
             {
                 _ = IsolateAsync();
@@ -148,7 +151,6 @@ namespace SBExplorer.Controls
 
         private void BtnRestore_Click(object sender, RoutedEventArgs e)
         {
-
             try
             {
                 _ = RestoreAsync();
@@ -171,12 +173,10 @@ namespace SBExplorer.Controls
             }
         }
 
-        public delegate void RemoveConnectionHandler(object sender, ConnectionConfig connectionConfig);
-        public event RemoveConnectionHandler RemoveConnection;
-
-        #endregion
+        #endregion Events
 
         #region Methods
+
         private void Load()
         {
             TxtJsonBasePath.Text = connectionConfig.BaseJsonPath;
@@ -222,7 +222,6 @@ namespace SBExplorer.Controls
                 connectionConfig.Isolated = false;
                 serviceBusExplorerService.SaveConfig();
                 MessageBox.Show("Queues restored, and isolated queues deleted", "ServiceBus Explorer");
-
             }
             GrdMain.IsEnabled = true;
         }
@@ -233,6 +232,7 @@ namespace SBExplorer.Controls
             Clipboard.SetText(queueList);
             MessageBox.Show("Queues list sent to clipboard.", "ServiceBus Explorer");
         }
-        #endregion        
+
+        #endregion Methods
     }
 }
