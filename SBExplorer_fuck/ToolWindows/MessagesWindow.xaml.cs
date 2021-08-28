@@ -27,7 +27,6 @@ namespace SBExplorer
             try
             {
                 TxtSend.Text = queueConfig.LastMessage;
-                ChkReceiveAnddDelete.IsChecked = queueConfig.ReceiveAndDelete;
                 _ = GetQueueInfoAsync();
             }
             catch (System.Exception ex)
@@ -131,30 +130,6 @@ namespace SBExplorer
                 MessageBox.Show(ex.Message, "ServiceBus Explorer", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
-
-        private void ChkReceiveAnddDelete_Checked(object sender, RoutedEventArgs e)
-        {
-            try
-            {
-                ChangeReceiveandDeleteConfig();
-            }
-            catch (System.Exception ex)
-            {
-                MessageBox.Show(ex.Message, "ServiceBus Explorer", MessageBoxButton.OK, MessageBoxImage.Error);
-            }
-        }
-
-        private void ChkReceiveAnddDelete_Unchecked(object sender, RoutedEventArgs e)
-        {
-            try
-            {
-                ChangeReceiveandDeleteConfig();
-            }
-            catch (System.Exception ex)
-            {
-                MessageBox.Show(ex.Message, "ServiceBus Explorer", MessageBoxButton.OK, MessageBoxImage.Error);
-            }
-        }
         #endregion
 
         #region Methods
@@ -180,7 +155,7 @@ namespace SBExplorer
         {
             GrdMain.IsEnabled = false;
             TxtReceive.Text =
-                await serviceBusExplorerService.ReceiveMessageAsync(connection.ConnectionString, queueConfig.QueueName, ChkReceiveAnddDelete.IsChecked.GetValueOrDefault());
+                await serviceBusExplorerService.ReceiveMessageAsync(connection.ConnectionString, queueConfig.QueueName, ChkReceiveandDelete.IsChecked.GetValueOrDefault());
             await GetQueueInfoAsync();
             GrdMain.IsEnabled = true;
         }
@@ -188,8 +163,7 @@ namespace SBExplorer
         private async Task ReceiveDeadLetterAsync()
         {
             GrdMain.IsEnabled = false;
-            TxtReceive.Text =
-                await serviceBusExplorerService.ReceiveDeadLetterMessageAsync(connection.ConnectionString, queueConfig.QueueName, ChkReceiveAnddDelete.IsChecked.GetValueOrDefault());
+            TxtReceive.Text = await serviceBusExplorerService.ReceiveDeadLetterMessageAsync(connection.ConnectionString, queueConfig.QueueName, ChkReceiveandDelete.IsChecked.GetValueOrDefault());
             await GetQueueInfoAsync();
             GrdMain.IsEnabled = true;
         }
@@ -238,13 +212,8 @@ namespace SBExplorer
             }
             GrdMain.IsEnabled = true;
         }
-
-        private void ChangeReceiveandDeleteConfig()
-        {
-            queueConfig.ReceiveAndDelete = ChkReceiveAnddDelete.IsChecked.GetValueOrDefault();
-            serviceBusExplorerService.SaveConfig();
-        }
-
         #endregion
+
+
     }
 }

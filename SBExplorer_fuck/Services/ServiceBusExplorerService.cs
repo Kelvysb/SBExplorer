@@ -42,8 +42,17 @@ namespace SBExplorer.Services
             SolutionFolder = PathHelper.MakeRelativePath(WorkDirectory, solutionFolder);
             SolutionFile = Path.Combine(SolutionFolder, Path.GetFileName(solutionFile));
             UserOptsFile = PathHelper.MakeRelativePath(WorkDirectory, userOptsFile);
-            LoadConfig();
-            UpdateConnections();
+            try
+            {
+                LoadConfig();
+                UpdateConnections();
+
+            }
+            catch (Exception ex)
+            {
+
+                throw ex;
+            }
         }
 
         public static void Initialize(IVsSolution solutionInfo)
@@ -148,23 +157,15 @@ namespace SBExplorer.Services
             }
         }
 
-        public async Task<string> ReceiveDeadLetterMessageAsync(string connectionString, string queueName, bool receiveAndDelete)
+        public async Task<string> ReceiveDeadLetterMessageAsync(string connectionString, string queueName, bool receiveandDelete)
         {
             try
             {
                 var queueManagement = new ManagementClient(new ServiceBusConnectionStringBuilder(connectionString));
                 if (await queueManagement.QueueExistsAsync(queueName))
                 {
-                    var receiver = new MessageReceiver(connectionString, $"{queueName}/$deadletterqueue", receiveAndDelete ? ReceiveMode.ReceiveAndDelete : ReceiveMode.PeekLock);
-                    Message message = null;
-                    if (receiveAndDelete)
-                    {
-                        message = await receiver.ReceiveAsync();
-                    }
-                    else
-                    {
-                        message = await receiver.PeekAsync();
-                    }
+                    var receiver = new MessageReceiver(connectionString, $"{queueName}/$deadletterqueue", receiveandDelete ? ReceiveMode.ReceiveAndDelete : ReceiveMode.PeekLock);
+                    var message = await receiver.PeekAsync();
                     if (message != null)
                     {
                         return System.Text.Encoding.UTF8.GetString(message.Body);
@@ -178,23 +179,15 @@ namespace SBExplorer.Services
             }
         }
 
-        public async Task<string> ReceiveMessageAsync(string connectionString, string queueName, bool receiveAndDelete)
+        public async Task<string> ReceiveMessageAsync(string connectionString, string queueName, bool receiveandDelete)
         {
             try
             {
                 var queueManagement = new ManagementClient(new ServiceBusConnectionStringBuilder(connectionString));
                 if (await queueManagement.QueueExistsAsync(queueName) && await GetMessageCountAsync(queueManagement, queueName) > 0)
                 {
-                    var receiver = new MessageReceiver(connectionString, queueName, receiveAndDelete ? ReceiveMode.ReceiveAndDelete : ReceiveMode.PeekLock);
-                    Message message = null;
-                    if (receiveAndDelete)
-                    {
-                        message = await receiver.ReceiveAsync();
-                    }
-                    else
-                    {
-                        message = await receiver.PeekAsync();
-                    }
+                    var receiver = new MessageReceiver(connectionString, queueName, receiveandDelete ? ReceiveMode.ReceiveAndDelete : ReceiveMode.PeekLock);
+                    var message = await receiver.PeekAsync();
                     if (message != null)
                     {
                         return System.Text.Encoding.UTF8.GetString(message.Body);
@@ -384,8 +377,7 @@ namespace SBExplorer.Services
                         QueueName = q.ToString(),
                         Description = q.GetKey().Humanize().Transform(To.LowerCase, To.TitleCase),
                         QueuePath = q.Path,
-                        NotifyChanges = false,
-                        ReceiveAndDelete = true
+                        NotifyChanges = false
                     })
                     .ToList();
         }

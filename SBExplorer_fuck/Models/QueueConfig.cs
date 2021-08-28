@@ -15,7 +15,5 @@
         public string LastMessage { get; set; }
 
         public string DefaultMessage { get; set; }
-
-        public bool ReceiveAndDelete { get; set; }
     }
 }

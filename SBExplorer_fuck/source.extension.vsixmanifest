@@ -3,7 +3,7 @@
     <Metadata>
         <Identity Id="SBExplorer.1966f8a4-7fd6-4d7c-a3ec-cf644aca4aad" Version="2.4" Language="en-US" Publisher="Kelvys Boniek Pantaleão" />
         <DisplayName>SBExplorer</DisplayName>
-        <Description xml:space="preserve">ServiceBus Explorer.</Description>
+        <Description xml:space="preserve">ServiceBus Explorer Extension</Description>
         <Icon>Resources\Icon.png</Icon>
         <PreviewImage>Resources\Icon.png</PreviewImage>
     </Metadata>
