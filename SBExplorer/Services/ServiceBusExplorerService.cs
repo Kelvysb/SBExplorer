@@ -1,43 +1,60 @@
-﻿using System;
+﻿using Humanizer;
+using Microsoft.Azure.ServiceBus;
+using Microsoft.Azure.ServiceBus.Core;
+using Microsoft.Azure.ServiceBus.Management;
+using Microsoft.VisualStudio.Shell.Interop;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using SBExplorer.Extensions;
+using SBExplorer.Helpers;
+using SBExplorer.Models;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using Humanizer;
-using Microsoft.Azure.ServiceBus;
-using Microsoft.Azure.ServiceBus.Core;
-using Microsoft.Azure.ServiceBus.Management;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-using SBExplorer.Core.Extensions;
-using SBExplorer.Core.Helpers;
-using SBExplorer.Core.Models;
 
-namespace SBExplorer.Core.Services
+namespace SBExplorer.Services
 {
     public class ServiceBusExplorerService
     {
-        public ServiceBusExplorerService(string solutionFolder, string solutionFile)
+        private static ServiceBusExplorerService instance;
+
+        public IVsSolution Solution { get; private set; }
+        public string WorkDirectory { get; private set; }
+        public string SolutionFolder { get; private set; }
+        public string SolutionFile { get; private set; }
+        public string UserOptsFile { get; private set; }
+        public string ConfigFolder { get; private set; }
+        public string ConfigPath { get; private set; }
+        public SBExplorerConfig Config { get; private set; }
+
+        private ServiceBusExplorerService(IVsSolution solutionInfo)
         {
+            Microsoft.VisualStudio.Shell.ThreadHelper.ThrowIfNotOnUIThread();
+            Solution = solutionInfo;
+            _ = solutionInfo.GetSolutionInfo(
+                out var solutionFolder,
+                out var solutionFile,
+                out var userOptsFile);
             WorkDirectory = solutionFolder;
             SolutionFolder = PathHelper.MakeRelativePath(WorkDirectory, solutionFolder);
             SolutionFile = Path.Combine(SolutionFolder, Path.GetFileName(solutionFile));
+            UserOptsFile = PathHelper.MakeRelativePath(WorkDirectory, userOptsFile);
             LoadConfig();
             UpdateConnections();
         }
 
-        public string WorkDirectory { get; private set; }
+        public static void Initialize(IVsSolution solutionInfo)
+        {
+            instance = new ServiceBusExplorerService(solutionInfo);
+        }
 
-        public string SolutionFolder { get; private set; }
-
-        public string SolutionFile { get; private set; }
-
-        public string ConfigFolder { get; private set; }
-
-        public string ConfigPath { get; private set; }
-
-        public SBExplorerConfig Config { get; private set; }
+        public static ServiceBusExplorerService GetInstance()
+        {
+            return instance;
+        }
 
         public async Task<QueueInfo> GetQueueInfoAsync(string connectionString, string queueName)
         {
@@ -131,14 +148,14 @@ namespace SBExplorer.Core.Services
             }
         }
 
-        public async Task<string> ReceiveDeadLetterMessageAsync(string connectionString, string queueName, bool receiveAndDelete)
+        public async Task<string> ReceiveDeadLetterMessageAsync(string connectionString, string queueName)
         {
             try
             {
                 var queueManagement = new ManagementClient(new ServiceBusConnectionStringBuilder(connectionString));
                 if (await queueManagement.QueueExistsAsync(queueName))
                 {
-                    var receiver = new MessageReceiver(connectionString, $"{queueName}/$deadletterqueue", receiveAndDelete ? ReceiveMode.ReceiveAndDelete : ReceiveMode.PeekLock);
+                    var receiver = new MessageReceiver(connectionString, $"{queueName}/$deadletterqueue", ReceiveMode.PeekLock);
                     var message = await receiver.PeekAsync();
                     if (message != null)
                     {
@@ -153,14 +170,14 @@ namespace SBExplorer.Core.Services
             }
         }
 
-        public async Task<string> ReceiveMessageAsync(string connectionString, string queueName, bool receiveAndDelete)
+        public async Task<string> ReceiveMessageAsync(string connectionString, string queueName)
         {
             try
             {
                 var queueManagement = new ManagementClient(new ServiceBusConnectionStringBuilder(connectionString));
                 if (await queueManagement.QueueExistsAsync(queueName) && await GetMessageCountAsync(queueManagement, queueName) > 0)
                 {
-                    var receiver = new MessageReceiver(connectionString, queueName, receiveAndDelete ? ReceiveMode.ReceiveAndDelete : ReceiveMode.PeekLock);
+                    var receiver = new MessageReceiver(connectionString, queueName, ReceiveMode.PeekLock);
                     var message = await receiver.PeekAsync();
                     if (message != null)
                     {
@@ -410,6 +427,7 @@ namespace SBExplorer.Core.Services
             {
                 ConfigFile = new ConfigFile
                 {
+
                     Source = ConfigFileSource.LaunchSettings,
                     FilePath = FindFileRecursive("launchSettings.json"),
                     Connections = new List<ConnectionConfig>

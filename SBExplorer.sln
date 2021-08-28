@@ -5,8 +5,6 @@ VisualStudioVersion = 16.0.31424.327
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SBExplorer", "SBExplorer\SBExplorer.csproj", "{8A8F90F0-65E6-4944-BEA4-EF1F6CCB16C5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SBExplorer.Core", "SBExplorer.Core\SBExplorer.Core.csproj", "{58B2B06B-2C8E-4F23-9151-0A8BE7684370}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -17,10 +15,6 @@ Global
 		{8A8F90F0-65E6-4944-BEA4-EF1F6CCB16C5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8A8F90F0-65E6-4944-BEA4-EF1F6CCB16C5}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8A8F90F0-65E6-4944-BEA4-EF1F6CCB16C5}.Release|Any CPU.Build.0 = Release|Any CPU
-		{58B2B06B-2C8E-4F23-9151-0A8BE7684370}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{58B2B06B-2C8E-4F23-9151-0A8BE7684370}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{58B2B06B-2C8E-4F23-9151-0A8BE7684370}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{58B2B06B-2C8E-4F23-9151-0A8BE7684370}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

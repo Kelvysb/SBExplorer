@@ -1,8 +1,8 @@
-﻿using System.Threading.Tasks;
+﻿using SBExplorer.Models;
+using SBExplorer.Services;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using SBExplorer.Core.Models;
-using SBExplorer.Core.Services;
 
 namespace SBExplorer.Controls
 {
@@ -17,13 +17,13 @@ namespace SBExplorer.Controls
 
         public ServiceBusQueue(ConnectionConfig connection, QueueConfig queueConfig)
         {
-            serviceBusExplorerService = SBExplorerPackage.Service;
+            serviceBusExplorerService = ServiceBusExplorerService.GetInstance();
             this.connection = connection;
             this.queueConfig = queueConfig;
             InitializeComponent();
         }
 
-        #region Events
+        #region Events        
 
         private void UserControl_Loaded(object sender, RoutedEventArgs e)
         {
@@ -73,7 +73,7 @@ namespace SBExplorer.Controls
             }
         }
 
-        #endregion Events
+        #endregion
 
         #region Methods
 
@@ -128,6 +128,7 @@ namespace SBExplorer.Controls
             }
         }
 
-        #endregion Methods
+        #endregion
+
     }
 }

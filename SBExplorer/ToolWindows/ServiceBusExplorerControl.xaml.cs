@@ -1,8 +1,8 @@
-﻿using System.Windows;
-using System.Windows.Controls;
-using SBExplorer.Controls;
-using SBExplorer.Core.Services;
+﻿using SBExplorer.Controls;
+using SBExplorer.Services;
 using SBExplorer.ToolWindows;
+using System.Windows;
+using System.Windows.Controls;
 
 namespace SBExplorer
 {
@@ -12,18 +12,19 @@ namespace SBExplorer
 
         public ServiceBusExplorerControl()
         {
-            serviceBusExplorerService = SBExplorerPackage.Service;
+            serviceBusExplorerService = ServiceBusExplorerService.GetInstance();
             InitializeComponent();
             LoadConnections();
         }
 
-        #region Events
 
+        #region Events
         private void ServiceBusExplorer_Loaded(object sender, RoutedEventArgs e)
         {
             try
             {
                 LoadConnections();
+
             }
             catch (System.Exception ex)
             {
@@ -54,11 +55,9 @@ namespace SBExplorer
                 MessageBox.Show(ex.Message, "ServiceBus Explorer", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
-
-        #endregion Events
+        #endregion
 
         #region Methods
-
         private void ReloadAll()
         {
             serviceBusExplorerService.LoadConfig();
@@ -82,7 +81,6 @@ namespace SBExplorer
             settingsWindow.ShowDialog();
             ReloadAll();
         }
-
-        #endregion Methods
+        #endregion
     }
 }

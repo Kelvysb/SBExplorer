@@ -1,4 +1,4 @@
-﻿namespace SBExplorer.Core.Models
+﻿namespace SBExplorer.Models
 {
     public class QueueInfo
     {

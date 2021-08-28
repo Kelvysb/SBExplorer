@@ -1,8 +1,8 @@
-﻿using System.Threading.Tasks;
+﻿using Microsoft.VisualStudio.PlatformUI;
+using SBExplorer.Models;
+using SBExplorer.Services;
+using System.Threading.Tasks;
 using System.Windows;
-using Microsoft.VisualStudio.PlatformUI;
-using SBExplorer.Core.Models;
-using SBExplorer.Core.Services;
 
 namespace SBExplorer
 {
@@ -14,7 +14,7 @@ namespace SBExplorer
 
         public MessagesWindow(ConnectionConfig connection, QueueConfig queueConfig)
         {
-            serviceBusExplorerService = SBExplorerPackage.Service;
+            serviceBusExplorerService = ServiceBusExplorerService.GetInstance();
             this.connection = connection;
             this.queueConfig = queueConfig;
             InitializeComponent();
@@ -34,7 +34,6 @@ namespace SBExplorer
                 MessageBox.Show(ex.Message, "ServiceBus Explorer", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
-
         private void BtnSend_Click(object sender, RoutedEventArgs e)
         {
             try
@@ -131,11 +130,9 @@ namespace SBExplorer
                 MessageBox.Show(ex.Message, "ServiceBus Explorer", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
-
-        #endregion Events
+        #endregion
 
         #region Methods
-
         private async Task SendMessageAsync()
         {
             if (string.IsNullOrEmpty(TxtSend.Text))
@@ -157,8 +154,7 @@ namespace SBExplorer
         private async Task ReceiveMessageAsync()
         {
             GrdMain.IsEnabled = false;
-            TxtReceive.Text =
-                await serviceBusExplorerService.ReceiveMessageAsync(connection.ConnectionString, queueConfig.QueueName, ChkReceiveAndDelete.IsChecked.GetValueOrDefault());
+            TxtReceive.Text = await serviceBusExplorerService.ReceiveMessageAsync(connection.ConnectionString, queueConfig.QueueName);
             await GetQueueInfoAsync();
             GrdMain.IsEnabled = true;
         }
@@ -166,8 +162,7 @@ namespace SBExplorer
         private async Task ReceiveDeadLetterAsync()
         {
             GrdMain.IsEnabled = false;
-            TxtReceive.Text =
-                await serviceBusExplorerService.ReceiveDeadLetterMessageAsync(connection.ConnectionString, queueConfig.QueueName, ChkReceiveAndDelete.IsChecked.GetValueOrDefault());
+            TxtReceive.Text = await serviceBusExplorerService.ReceiveDeadLetterMessageAsync(connection.ConnectionString, queueConfig.QueueName);
             await GetQueueInfoAsync();
             GrdMain.IsEnabled = true;
         }
@@ -216,7 +211,8 @@ namespace SBExplorer
             }
             GrdMain.IsEnabled = true;
         }
+        #endregion
 
-        #endregion Methods
+
     }
 }

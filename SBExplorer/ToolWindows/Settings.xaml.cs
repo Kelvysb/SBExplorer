@@ -1,26 +1,26 @@
-﻿using System.Collections.Generic;
+﻿using Microsoft.VisualStudio.PlatformUI;
+using SBExplorer.Controls;
+using SBExplorer.Models;
+using SBExplorer.Services;
+using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
-using Microsoft.VisualStudio.PlatformUI;
-using SBExplorer.Controls;
-using SBExplorer.Core.Models;
-using SBExplorer.Core.Services;
 
 namespace SBExplorer.ToolWindows
 {
     public partial class Settings : DialogWindow
     {
+
         private readonly ServiceBusExplorerService serviceBusExplorerService;
         private List<ConnectionSettings> connectionSettings;
 
         public Settings()
         {
-            serviceBusExplorerService = SBExplorerPackage.Service;
+            serviceBusExplorerService = ServiceBusExplorerService.GetInstance();
             InitializeComponent();
         }
 
         #region Events
-
         private void DialogWindow_Loaded(object sender, RoutedEventArgs e)
         {
             try
@@ -68,7 +68,6 @@ namespace SBExplorer.ToolWindows
                 MessageBox.Show(ex.Message, "ServiceBus Explorer", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
-
         private void DialogWindow_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
             try
@@ -92,8 +91,7 @@ namespace SBExplorer.ToolWindows
                 MessageBox.Show(ex.Message, "ServiceBus Explorer", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
-
-        #endregion Events
+        #endregion
 
         #region Methods
 
@@ -147,7 +145,6 @@ namespace SBExplorer.ToolWindows
             serviceBusExplorerService.Config.ConfigFile.Connections.Remove(connectionConfig);
             Load();
         }
-
-        #endregion Methods
+        #endregion
     }
 }
