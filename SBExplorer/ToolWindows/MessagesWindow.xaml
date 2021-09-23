@@ -9,8 +9,8 @@
                         mc:Ignorable="d"
                         Width="730"
                         MinWidth="730"
-                        Height="400"
-                        MinHeight="400"
+                        Height="425"
+                        MinHeight="425"
                         Title="Message"
                         d:DesignHeight="700"
                         d:DesignWidth="400" Icon="/SBExplorer;component/Resources/Message.png" WindowStartupLocation="CenterScreen" WindowStyle="ToolWindow" Loaded="DialogWindow_Loaded">
@@ -19,6 +19,7 @@
             <RowDefinition Height="*"/>
             <RowDefinition Height="5"/>
             <RowDefinition Height="*"/>
+            <RowDefinition Height="25"/>
         </Grid.RowDefinitions>
         <Grid Grid.Row="0">
             <Grid.RowDefinitions>
@@ -47,5 +48,6 @@
             </StackPanel>
             <TextBox x:Name="TxtReceive" Grid.Row="1" ScrollViewer.CanContentScroll="True" IsReadOnly="True" AcceptsReturn="True"></TextBox>
         </Grid>
+        <Label Name="LblMessage" Grid.Row="3"/>
     </Grid>
 </platform:DialogWindow>

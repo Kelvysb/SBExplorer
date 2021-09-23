@@ -16,9 +16,15 @@ namespace SBExplorer.Models
 
         public string Description { get; set; }
 
+        public bool ConnectionstringFullPathMode { get; set; }
+
         public string ConnectionString { get; set; }
 
         public string QueueNamesPattern { get; set; }
+
+        public string QueueNamesContains { get; set; }
+
+        public string QueueNamesNotContains { get; set; }
 
         public List<QueueConfig> Queues { get; set; }
 

@@ -162,13 +162,13 @@ namespace SBExplorer
         {
             if (string.IsNullOrEmpty(TxtSend.Text))
             {
-                MessageBox.Show("Message cannot be empty.", "ServiceBus Explorer", MessageBoxButton.OK, MessageBoxImage.Warning);
+                LblMessage.Content = "Message cannot be empty.";
                 return;
             }
             GrdMain.IsEnabled = false;
             if (await serviceBusExplorerService.SendMessageAsync(connection.ConnectionString, queueConfig.QueueName, TxtSend.Text))
             {
-                MessageBox.Show($"Message sent to {queueConfig.QueueName}.", "ServiceBus Explorer");
+                LblMessage.Content = $"Message sent to {queueConfig.QueueName}.";
                 await GetQueueInfoAsync();
                 queueConfig.LastMessage = TxtSend.Text;
                 serviceBusExplorerService.SaveConfig();
@@ -198,7 +198,7 @@ namespace SBExplorer
         {
             if (await serviceBusExplorerService.ClearQueueAsync(connection.ConnectionString, queueConfig.QueueName))
             {
-                MessageBox.Show($"Queue {queueConfig.QueueName} cleared.", "ServiceBus Explorer");
+                LblMessage.Content = $"Queue {queueConfig.QueueName} cleared.";
                 await GetQueueInfoAsync();
             }
         }
@@ -233,7 +233,7 @@ namespace SBExplorer
             GrdMain.IsEnabled = false;
             if (await serviceBusExplorerService.ClearDeadLetterAsync(connection.ConnectionString, queueConfig.QueueName))
             {
-                MessageBox.Show($"Dead letter of {queueConfig.QueueName} queue cleared.", "ServiceBus Explorer");
+                LblMessage.Content = $"Dead letter of {queueConfig.QueueName} queue cleared.";
                 await GetQueueInfoAsync();
             }
             GrdMain.IsEnabled = true;
