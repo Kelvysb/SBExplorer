@@ -385,6 +385,7 @@ namespace SBExplorer.Services
                 if (existing != null)
                 {
                     existing.QueueName = queue.QueueName;
+                    existing.QueuePath = queue.QueuePath;
                 }
                 else
                 {

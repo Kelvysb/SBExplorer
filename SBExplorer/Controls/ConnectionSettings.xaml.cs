@@ -248,6 +248,10 @@ namespace SBExplorer.Controls
                 serviceBusExplorerService.SaveConfig();
                 MessageBox.Show("Queues isolated", "ServiceBus Explorer");
             }
+            else
+            {
+                MessageBox.Show("Isolation failed", "ServiceBus Explorer");
+            }
             GrdMain.IsEnabled = true;
         }
 

@@ -28,9 +28,9 @@
             </Grid.RowDefinitions>
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
                 <Button x:Name="BtnExportQueues" Background="Transparent" ToolTip="Export queue names to clipboard" Margin="2" Width="130" Height="20" MinWidth="130" MinHeight="20" Padding="0" BorderThickness="0" Click="BtnExportQueues_Click">Export Queue List</Button>
-                <Button x:Name="BtnIsolate" Background="Transparent" ToolTip="Isolate queues" Margin="2" Width="50" Height="20" MinWidth="50" MinHeight="20" Padding="0" BorderThickness="0" Click="BtnIsolate_Click">Isolate</Button>
-                <Button x:Name="BtnRestore" Background="Transparent" ToolTip="Restore isolated queues" Margin="2" Width="50" Height="20" MinWidth="50" MinHeight="20" Padding="0" BorderThickness="0" Click="BtnRestore_Click">Restore</Button>
-                <Button x:Name="BtnRemove" Background="Transparent" ToolTip="Remove" Margin="2" Width="20" Height="20" MinWidth="20" MinHeight="20" Padding="0" BorderThickness="0" Click="BtnRemove_Click">
+                <Button x:Name="BtnIsolate" Background="Transparent" Cursor="Hand" ToolTip="Isolate queues" Margin="2" Width="50" Height="20" MinWidth="50" MinHeight="20" Padding="0" BorderThickness="0" Click="BtnIsolate_Click">Isolate</Button>
+                <Button x:Name="BtnRestore" Background="Transparent" Cursor="Hand" ToolTip="Restore isolated queues" Margin="2" Width="50" Height="20" MinWidth="50" MinHeight="20" Padding="0" BorderThickness="0" Click="BtnRestore_Click">Restore</Button>
+                <Button x:Name="BtnRemove" Background="Transparent" Cursor="Hand" ToolTip="Remove" Margin="2" Width="20" Height="20" MinWidth="20" MinHeight="20" Padding="0" BorderThickness="0" Click="BtnRemove_Click">
                     <Image Source="pack://application:,,,/SBExplorer;component/Resources/Remove.png" ></Image>
                 </Button>
             </StackPanel>
