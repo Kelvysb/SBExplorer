@@ -267,7 +267,10 @@ namespace SBExplorer.Services
                     configFile
                         .SelectToken(queue.QueuePath)
                         .Replace(queue.QueueName.Replace($"{isolationName}_", ""));
-                    await DeleteQueueAsync(connection.ConnectionString, $"{isolationName}_{queue.QueueName}");
+                    if (queue.QueueName.StartsWith(isolationName))
+                    {
+                        await DeleteQueueAsync(connection.ConnectionString, queue.QueueName);
+                    }
                 }
 
                 File.WriteAllText(Path.Combine(WorkDirectory, Config.ConfigFile.FilePath), configFile.ToString(Formatting.Indented));

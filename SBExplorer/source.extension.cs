@@ -11,7 +11,7 @@ namespace SBExplorer
         public const string Name = "SBExplorer";
         public const string Description = @"ServiceBus Explorer.";
         public const string Language = "en-US";
-        public const string Version = "3.1";
+        public const string Version = "3.2";
         public const string Author = "Kelvys Boniek Pantaleão";
         public const string Tags = "";
     }
