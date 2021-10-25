@@ -10,7 +10,6 @@ namespace SBExplorer.ToolWindows
 {
     public partial class Settings : DialogWindow
     {
-
         private readonly ServiceBusExplorerService serviceBusExplorerService;
         private List<ConnectionSettings> connectionSettings;
 
@@ -21,6 +20,7 @@ namespace SBExplorer.ToolWindows
         }
 
         #region Events
+
         private void DialogWindow_Loaded(object sender, RoutedEventArgs e)
         {
             try
@@ -68,6 +68,7 @@ namespace SBExplorer.ToolWindows
                 MessageBox.Show(ex.Message, "ServiceBus Explorer", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
+
         private void DialogWindow_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
             try
@@ -91,7 +92,8 @@ namespace SBExplorer.ToolWindows
                 MessageBox.Show(ex.Message, "ServiceBus Explorer", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
-        #endregion
+
+        #endregion Events
 
         #region Methods
 
@@ -125,6 +127,7 @@ namespace SBExplorer.ToolWindows
 
         private void ChangeSource(int index)
         {
+            var current = serviceBusExplorerService.Config.ConfigFile.Source;
             if (index == 0)
             {
                 serviceBusExplorerService.Config.ConfigFile.Source = ConfigFileSource.LaunchSettings;
@@ -132,6 +135,10 @@ namespace SBExplorer.ToolWindows
             else
             {
                 serviceBusExplorerService.Config.ConfigFile.Source = ConfigFileSource.AppSettings;
+            }
+            if (current != serviceBusExplorerService.Config.ConfigFile.Source)
+            {
+                serviceBusExplorerService.Config.ConfigFile.FilePath = "";
             }
         }
 
@@ -145,6 +152,7 @@ namespace SBExplorer.ToolWindows
             serviceBusExplorerService.Config.ConfigFile.Connections.Remove(connectionConfig);
             Load();
         }
-        #endregion
+
+        #endregion Methods
     }
 }

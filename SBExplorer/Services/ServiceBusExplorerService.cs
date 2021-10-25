@@ -267,7 +267,10 @@ namespace SBExplorer.Services
                     configFile
                         .SelectToken(queue.QueuePath)
                         .Replace(queue.QueueName.Replace($"{isolationName}_", ""));
-                    await DeleteQueueAsync(connection.ConnectionString, $"{isolationName}_{queue.QueueName}");
+                    if (queue.QueueName.StartsWith(isolationName))
+                    {
+                        await DeleteQueueAsync(connection.ConnectionString, queue.QueueName);
+                    }
                 }
 
                 File.WriteAllText(Path.Combine(WorkDirectory, Config.ConfigFile.FilePath), configFile.ToString(Formatting.Indented));
@@ -300,13 +303,28 @@ namespace SBExplorer.Services
 
         public void UpdateConnections()
         {
+            if (string.IsNullOrEmpty(Config.ConfigFile.FilePath))
+            {
+                if (Config.ConfigFile.Source == ConfigFileSource.LaunchSettings)
+                {
+                    Config.ConfigFile.FilePath = FindFileRecursive("launchSettings.json");
+                }
+                else
+                {
+                    Config.ConfigFile.FilePath = FindFileRecursive("appsettings.json");
+                }
+            }
             var configFileString = File.ReadAllText(Path.Combine(WorkDirectory, Config.ConfigFile.FilePath));
             JObject configFile = JObject.Parse(configFileString);
 
             foreach (var connectionConfig in Config.ConfigFile.Connections)
             {
                 var variables = configFile.SelectTokens(connectionConfig.BaseJsonPath);
-                ConnectionConfig connection = GetConnection(connectionConfig, variables);
+                ConnectionConfig connection =
+                    !connectionConfig.ConnectionstringFullPathMode
+                    ? GetConnection(connectionConfig, variables)
+                    : GetConnectionByPath(connectionConfig, configFile);
+
                 if (connection == null)
                 {
                     continue;
@@ -360,34 +378,98 @@ namespace SBExplorer.Services
 
         private static void MergeQueues(ConnectionConfig connectionsConfig, List<QueueConfig> queues)
         {
+            if (connectionsConfig.Queues == null)
+            {
+                connectionsConfig.Queues = new List<QueueConfig>();
+            }
             foreach (var queue in queues)
             {
                 var existing = connectionsConfig.Queues.FirstOrDefault(q => q.Key.Equals(queue.Key, StringComparison.InvariantCultureIgnoreCase));
                 if (existing != null)
                 {
                     existing.QueueName = queue.QueueName;
+                    existing.QueuePath = queue.QueuePath;
                 }
                 else
                 {
                     connectionsConfig.Queues.Add(queue);
                 }
             }
+            connectionsConfig.Queues.RemoveAll(q => !queues.Any(a => a.Key == q.Key));
         }
 
         private static List<QueueConfig> GetQueues(ConnectionConfig connectionConfig, IEnumerable<JToken> variables)
         {
-            return variables
-                    .Where(t => Regex.IsMatch(t.GetKey(), connectionConfig.QueueNamesPattern))
-                    .Select(q => new QueueConfig
+            var result = GetDirectKeyQueues(connectionConfig, variables);
+            result.AddRange(GetSubPathQueues(connectionConfig, variables));
+            return result;
+        }
+
+        private static List<QueueConfig> GetSubPathQueues(ConnectionConfig connectionConfig, IEnumerable<JToken> variables)
+        {
+            var result = new List<QueueConfig>();
+
+            var subMatchPaths = variables
+                            .Where(t => CheckKey(connectionConfig, t, true))
+                            .ToList();
+
+            foreach (var item in subMatchPaths)
+            {
+                result.AddRange(item
+                    .SelectMany(t => t.Children())
+                    .Select(q =>
                     {
-                        Key = q.GetKey(),
-                        QueueName = q.ToString(),
-                        Description = q.GetKey().Humanize().Transform(To.LowerCase, To.TitleCase),
-                        QueuePath = q.Path,
-                        NotifyChanges = false,
-                        ReceiveAndDelete = true
+                        return new QueueConfig
+                        {
+                            Key = q.GetKey(),
+                            QueueName = q.ToString(),
+                            Description = q.GetKey().Humanize().Transform(To.LowerCase, To.TitleCase),
+                            QueuePath = q.Path,
+                            NotifyChanges = false,
+                            ReceiveAndDelete = true
+                        };
+                    }));
+            }
+
+            return result;
+        }
+
+        private static List<QueueConfig> GetDirectKeyQueues(ConnectionConfig connectionConfig, IEnumerable<JToken> variables)
+        {
+            return variables
+                    .Where(t => CheckKey(connectionConfig, t, false))
+                    .Select(q =>
+                    {
+                        return new QueueConfig
+                        {
+                            Key = q.GetKey(),
+                            QueueName = q.ToString(),
+                            Description = q.GetKey().Humanize().Transform(To.LowerCase, To.TitleCase),
+                            QueuePath = q.Path,
+                            NotifyChanges = false,
+                            ReceiveAndDelete = true
+                        };
                     })
                     .ToList();
+        }
+
+        private static bool CheckKey(ConnectionConfig connectionConfig, JToken token, bool isSubPath)
+        {
+            var result = false;
+            var key = token.GetKey();
+            result = Regex.IsMatch(key, connectionConfig.QueueNamesPattern);
+            result = result && ((token.Children().Any() && isSubPath) || (!token.Children().Any() && !isSubPath));
+            if (result && !string.IsNullOrEmpty(connectionConfig.QueueNamesContains))
+            {
+                var containValues = connectionConfig.QueueNamesContains.Split(',');
+                result = containValues.All(c => key.Contains(c));
+            }
+            if (result && !string.IsNullOrEmpty(connectionConfig.QueueNamesNotContains))
+            {
+                var containValues = connectionConfig.QueueNamesNotContains.Split(',');
+                result = containValues.All(c => !key.Contains(c));
+            }
+            return result;
         }
 
         private static ConnectionConfig GetConnection(ConnectionConfig connectionsConfig, IEnumerable<JToken> variables)
@@ -438,13 +520,55 @@ namespace SBExplorer.Services
                 : $"Endpoint={endpoint};SharedAccessKeyName={sharedKeyName};SharedAccessKey={sharedKey}";
         }
 
+        private static string GetConnectionStringByPath(ConnectionConfig connectionsConfig, JObject root)
+        {
+            var endpoint = root.SelectTokens(connectionsConfig.Endpoint)
+                 .Select(c => c.ToString())
+                 .FirstOrDefault();
+
+            var sharedKeyName = root.SelectTokens(connectionsConfig.SharedKeyName)
+                .Select(c => c.ToString())
+                .FirstOrDefault();
+
+            var sharedKey = root.SelectTokens(connectionsConfig.SharedKey)
+                .Select(c => c.ToString())
+                .FirstOrDefault();
+
+            return string.IsNullOrEmpty(endpoint) || string.IsNullOrEmpty(sharedKeyName) || string.IsNullOrEmpty(sharedKey)
+                ? ""
+                : $"Endpoint={endpoint};SharedAccessKeyName={sharedKeyName};SharedAccessKey={sharedKey}";
+        }
+
+        private ConnectionConfig GetConnectionByPath(ConnectionConfig connectionsConfig, JObject root)
+        {
+            var result = root.SelectTokens(connectionsConfig.Key)
+                .Select(c => new ConnectionConfig
+                {
+                    ConnectionString = c.ToString(),
+                    Description = c.GetKey().Humanize().Transform(To.LowerCase, To.TitleCase)
+                })
+                .FirstOrDefault();
+
+            if (result == null)
+            {
+                result = root.SelectTokens(connectionsConfig.Endpoint)
+                .Select(c => new ConnectionConfig
+                {
+                    ConnectionString = GetConnectionStringByPath(connectionsConfig, root),
+                    Description = c.GetKey().Humanize().Transform(To.LowerCase, To.TitleCase)
+                })
+                .FirstOrDefault();
+            }
+
+            return result;
+        }
+
         private SBExplorerConfig GetDefaultConfig()
         {
             return new SBExplorerConfig
             {
                 ConfigFile = new ConfigFile
                 {
-
                     Source = ConfigFileSource.LaunchSettings,
                     FilePath = FindFileRecursive("launchSettings.json"),
                     Connections = new List<ConnectionConfig>

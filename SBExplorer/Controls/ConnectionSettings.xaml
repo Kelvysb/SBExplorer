@@ -5,7 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:SBExplorer.Controls"
              mc:Ignorable="d" 
-             d:DesignHeight="230" d:DesignWidth="800" Loaded="UserControl_Loaded">
+             d:DesignHeight="300" d:DesignWidth="800" Loaded="UserControl_Loaded">
     <Border BorderThickness="2" Margin="2" BorderBrush="DarkGray">
         <Grid Margin="5" x:Name="GrdMain">
             <Grid.RowDefinitions>
@@ -21,12 +21,16 @@
                 <RowDefinition Height="*"/>
                 <RowDefinition Height="5"/>
                 <RowDefinition Height="*"/>
+                <RowDefinition Height="5"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="5"/>
+                <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
                 <Button x:Name="BtnExportQueues" Background="Transparent" ToolTip="Export queue names to clipboard" Margin="2" Width="130" Height="20" MinWidth="130" MinHeight="20" Padding="0" BorderThickness="0" Click="BtnExportQueues_Click">Export Queue List</Button>
-                <Button x:Name="BtnIsolate" Background="Transparent" ToolTip="Isolate queues" Margin="2" Width="50" Height="20" MinWidth="50" MinHeight="20" Padding="0" BorderThickness="0" Click="BtnIsolate_Click">Isolate</Button>
-                <Button x:Name="BtnRestore" Background="Transparent" ToolTip="Restore isolated queues" Margin="2" Width="50" Height="20" MinWidth="50" MinHeight="20" Padding="0" BorderThickness="0" Click="BtnRestore_Click">Restore</Button>
-                <Button x:Name="BtnRemove" Background="Transparent" ToolTip="Remove" Margin="2" Width="20" Height="20" MinWidth="20" MinHeight="20" Padding="0" BorderThickness="0" Click="BtnRemove_Click">
+                <Button x:Name="BtnIsolate" Background="Transparent" Cursor="Hand" ToolTip="Isolate queues" Margin="2" Width="50" Height="20" MinWidth="50" MinHeight="20" Padding="0" BorderThickness="0" Click="BtnIsolate_Click">Isolate</Button>
+                <Button x:Name="BtnRestore" Background="Transparent" Cursor="Hand" ToolTip="Restore isolated queues" Margin="2" Width="50" Height="20" MinWidth="50" MinHeight="20" Padding="0" BorderThickness="0" Click="BtnRestore_Click">Restore</Button>
+                <Button x:Name="BtnRemove" Background="Transparent" Cursor="Hand" ToolTip="Remove" Margin="2" Width="20" Height="20" MinWidth="20" MinHeight="20" Padding="0" BorderThickness="0" Click="BtnRemove_Click">
                     <Image Source="pack://application:,,,/SBExplorer;component/Resources/Remove.png" ></Image>
                 </Button>
             </StackPanel>
@@ -46,7 +50,17 @@
                 <Label Grid.Column="0">Base Json Path:</Label>
                 <TextBox x:Name="TxtJsonBasePath" Grid.Column="1" TextChanged="TxtJsonBasePath_TextChanged"></TextBox>
             </Grid>
+
             <Grid Grid.Row="5">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="130"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <Label Grid.Column="0">Connection key mode:</Label>
+                <CheckBox x:Name="ChkConnectionStringFullPath" Grid.Column="2"  VerticalAlignment="Center" Checked="ChkConnectionStringFullPath_Checked">Full Path (Root based JPath)</CheckBox>
+            </Grid>
+            
+            <Grid Grid.Row="7">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="130"/>
                     <ColumnDefinition Width="*"/>
@@ -54,7 +68,7 @@
                 <Label Grid.Column="0">Connection string:</Label>
                 <TextBox x:Name="TxtConnectionString" Grid.Column="1" TextChanged="TxtConnectionString_TextChanged"></TextBox>
             </Grid>
-            <Grid Grid.Row="7">
+            <Grid Grid.Row="9">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="130"/>
                     <ColumnDefinition Width="*"/>
@@ -62,7 +76,7 @@
                 <Label Grid.Column="0">Endpoint:</Label>
                 <TextBox x:Name="TxtEndpoint" Grid.Column="1" TextChanged="TxtEndpoint_TextChanged"></TextBox>
             </Grid>
-            <Grid Grid.Row="9">
+            <Grid Grid.Row="11">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="130"/>
                     <ColumnDefinition Width="*"/>
@@ -74,13 +88,27 @@
                 <Label Grid.Column="2">Shared Key:</Label>
                 <TextBox x:Name="TxtSharedkey" Grid.Column="3" TextChanged="TxtSharedkey_TextChanged"></TextBox>
             </Grid>
-            <Grid Grid.Row="11">
+
+            <Grid Grid.Row="13">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="130"/>
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
                 <Label Grid.Column="0">Queue key pattern:</Label>
                 <TextBox x:Name="TxtQueuesPattern" Grid.Column="1" TextChanged="TxtQueuesPattern_TextChanged"></TextBox>
+            </Grid>
+
+            <Grid Grid.Row="15">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="130"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="150"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <Label Grid.Column="0">Queue key contains:</Label>
+                <TextBox x:Name="TxtQueuesPatternContains" Grid.Column="1" TextChanged="TxtQueuesPatternContains_TextChanged"></TextBox>
+                <Label Grid.Column="2">Queue key not contains:</Label>
+                <TextBox x:Name="TxtQueuesPatternNotContains" Grid.Column="3" TextChanged="TxtQueuesPatternnotContains_TextChanged"></TextBox>
             </Grid>
         </Grid>
     </Border>

@@ -171,6 +171,42 @@ namespace SBExplorer.Controls
             }
         }
 
+        private void ChkConnectionStringFullPath_Checked(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                connectionConfig.ConnectionstringFullPathMode = ChkConnectionStringFullPath.IsChecked.HasValue && ChkConnectionStringFullPath.IsChecked.Value;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, "ServiceBus Explorer", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
+        private void TxtQueuesPatternContains_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            try
+            {
+                connectionConfig.QueueNamesContains = TxtQueuesPatternContains.Text;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, "ServiceBus Explorer", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
+        private void TxtQueuesPatternnotContains_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            try
+            {
+                connectionConfig.QueueNamesNotContains = TxtQueuesPatternNotContains.Text;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, "ServiceBus Explorer", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
         public delegate void RemoveConnectionHandler(object sender, ConnectionConfig connectionConfig);
         public event RemoveConnectionHandler RemoveConnection;
 
@@ -186,6 +222,9 @@ namespace SBExplorer.Controls
             TxtEndpoint.Text = connectionConfig.Endpoint;
             TxtSharedKeyName.Text = connectionConfig.SharedKeyName;
             TxtSharedkey.Text = connectionConfig.SharedKey;
+            TxtQueuesPatternContains.Text = connectionConfig.QueueNamesContains;
+            TxtQueuesPatternNotContains.Text = connectionConfig.QueueNamesNotContains;
+            ChkConnectionStringFullPath.IsChecked = connectionConfig.ConnectionstringFullPathMode;
             if (connectionConfig.Isolated)
             {
                 BtnIsolate.Visibility = Visibility.Collapsed;
@@ -208,6 +247,10 @@ namespace SBExplorer.Controls
                 connectionConfig.Isolated = true;
                 serviceBusExplorerService.SaveConfig();
                 MessageBox.Show("Queues isolated", "ServiceBus Explorer");
+            }
+            else
+            {
+                MessageBox.Show("Isolation failed", "ServiceBus Explorer");
             }
             GrdMain.IsEnabled = true;
         }
@@ -233,6 +276,8 @@ namespace SBExplorer.Controls
             Clipboard.SetText(queueList);
             MessageBox.Show("Queues list sent to clipboard.", "ServiceBus Explorer");
         }
-        #endregion        
+        #endregion
+
+
     }
 }
