@@ -4,8 +4,9 @@
         <Identity Id="SBExplorer.1966f8a4-7fd6-4d7c-a3ec-cf644aca4aad" Version="2.4" Language="en-US" Publisher="Kelvys Boniek Pantaleão" />
         <DisplayName>SBExplorer</DisplayName>
         <Description xml:space="preserve">ServiceBus Explorer.</Description>
-        <Icon>Resources\Icon.png</Icon>
-        <PreviewImage>Resources\Icon.png</PreviewImage>
+        <MoreInfo>https://github.com/Kelvysb/SBExplorer</MoreInfo>
+        <Icon>.\Resources\Icon.png</Icon>
+        <PreviewImage>.\Resources\Icon.png</PreviewImage>
     </Metadata>
     <Installation>
         <InstallationTarget Id="Microsoft.VisualStudio.Community" Version="[16.0, 17.0)" />
